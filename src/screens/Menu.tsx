@@ -66,11 +66,12 @@ export function Menu({ initialDiff, onPlay }: Props) {
             <div className="text-center sm:text-left">
               <p className="font-display text-sm tracking-[0.3em] text-mustard/90">🔥 FAST FOOD SIMULATOR 🔥</p>
               <h1 className="anim-flicker font-display text-5xl leading-none text-mustard shadow-chunky sm:text-7xl">
-                CHAPA QUENTE!
+                CHAPA <a href="http://QUENTE.GG" target="_blank" rel="noreferrer" className="text-mustard underline underline-offset-4">QUENTE.GG</a>
               </h1>
               <p className="mt-2 max-w-md font-body text-sm font-medium text-cream/85 sm:text-base">
-                O pedido chega na tela, o relógio corre e o cliente <span className="font-bold text-mustard">surta</span>.
-                Monte o burger na ordem certa e suba de cargo — de Estagiário a Lenda do Fast Food.
+                Os pedidos não param. O tempo voa.
+                <br />
+                Monte cada hambúrguer na ordem certa e conquiste seu lugar entre as lendas do fast food.
               </p>
             </div>
           </div>
