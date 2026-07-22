@@ -1,2 +1,2 @@
 # CHAPAQUENTE
-Jogo de montar pedidos
+Jogo de montar pedidos de hamburguer
