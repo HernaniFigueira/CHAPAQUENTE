@@ -34,6 +34,7 @@ export function Menu({ initialDiff, onPlay }: Props) {
   const career = useMemo(loadCareer, []);
   const scores = useMemo(loadScores, []);
   const [startLevel, setStartLevel] = useState(Math.min(career.unlocked, LEVELS.length - 1));
+  const [showControls, setShowControls] = useState(false);
 
   const play = () => {
     unlockAudio();
@@ -133,24 +134,35 @@ export function Menu({ initialDiff, onPlay }: Props) {
               </span>
             </button>
 
-            <div className="grid grid-cols-2 gap-3 text-choco">
-              <div className="rounded-xl border-4 border-ketchup-dark bg-paper p-3">
-                <h3 className="font-display text-base text-ketchup">⌨️ TECLADO</h3>
-                <ul className="mt-1 space-y-1 text-xs font-semibold">
-                  <li><Kbd>1</Kbd>–<Kbd>8</Kbd> empilhar ingrediente</li>
-                  <li><Kbd>ESPAÇO</Kbd> servir o pedido</li>
-                  <li><Kbd>⌫</Kbd> / <Kbd>X</Kbd> desfazer peça</li>
-                  <li><Kbd>P</Kbd> / <Kbd>ESC</Kbd> pausar</li>
-                </ul>
-              </div>
-              <div className="rounded-xl border-4 border-ketchup-dark bg-paper p-3">
-                <h3 className="font-display text-base text-ketchup">📱 TOQUE</h3>
-                <ul className="mt-1 space-y-1 text-xs font-semibold">
-                  <li>👆 Toque nos ingredientes</li>
-                  <li>🟢 Botão SERVIR pra entregar</li>
-                  <li>↩️ DESFAZER corrige o erro</li>
-                  <li>⏸️ Pausa no canto da tela</li>
-                </ul>
+            <button
+              type="button"
+              onClick={() => setShowControls((v) => !v)}
+              aria-expanded={showControls}
+              aria-label={showControls ? "Ocultar controles do jogo" : "Mostrar controles do jogo"}
+              className="btn3d sm:hidden flex w-full items-center justify-center gap-2 rounded-xl border-b-4 border-[#c9b98f] bg-paper px-4 py-3 text-xl text-choco hover:bg-[#fff3d6]"
+            >
+              <span aria-hidden>⚙️</span>
+            </button>
+            <div className={cn("sm:block", !showControls && "hidden")}>
+              <div className="grid grid-cols-2 gap-3 text-choco">
+                <div className="rounded-xl border-4 border-ketchup-dark bg-paper p-3">
+                  <h3 className="font-display text-base text-ketchup">⌨️ TECLADO</h3>
+                  <ul className="mt-1 space-y-1 text-xs font-semibold">
+                    <li><Kbd>1</Kbd>–<Kbd>8</Kbd> empilhar ingrediente</li>
+                    <li><Kbd>ESPAÇO</Kbd> servir o pedido</li>
+                    <li><Kbd>⌫</Kbd> / <Kbd>X</Kbd> desfazer peça</li>
+                    <li><Kbd>P</Kbd> / <Kbd>ESC</Kbd> pausar</li>
+                  </ul>
+                </div>
+                <div className="rounded-xl border-4 border-ketchup-dark bg-paper p-3">
+                  <h3 className="font-display text-base text-ketchup">📱 TOQUE</h3>
+                  <ul className="mt-1 space-y-1 text-xs font-semibold">
+                    <li>👆 Toque nos ingredientes</li>
+                    <li>🟢 Botão SERVIR pra entregar</li>
+                    <li>↩️ DESFAZER corrige o erro</li>
+                    <li>⏸️ Pausa no canto da tela</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </section>
