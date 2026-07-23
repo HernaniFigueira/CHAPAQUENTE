@@ -515,7 +515,7 @@ export function Game({ difficulty, startLevel, onExit }: Props) {
       {/* ============ main ============ */}
       <main className="relative z-10 flex min-h-0 flex-1 flex-col sm:flex-row">
         {/* --- orders rail --- */}
-        <aside className="flex shrink-0 gap-2 border-b-4 border-[#3a0a06] bg-[#5c0f0a] px-2 py-2 sm:w-[300px] sm:flex-col sm:gap-3 sm:overflow-y-auto sm:border-r-4 sm:border-b-0 sm:p-3">
+        <aside className="flex flex-col shrink-0 gap-2 border-b-4 border-[#3a0a06] bg-[#5c0f0a] px-2 py-2 sm:w-[300px] sm:flex-col sm:gap-3 sm:overflow-y-auto sm:border-r-4 sm:border-b-0 sm:p-3">
           {order && (
             <>
               {/* customer */}
@@ -523,7 +523,7 @@ export function Game({ difficulty, startLevel, onExit }: Props) {
                 ref={customerRef}
                 key={`c${order.id}`}
                 className={cn(
-                  "anim-slide-in-left relative w-[108px] shrink-0 rounded-xl border-4 bg-cream p-2 sm:w-full",
+                  "anim-slide-in-left relative w-full shrink-0 rounded-xl border-4 bg-cream p-2 sm:w-full",
                   phase === "angry" ? "anim-slide-out-left border-ketchup" : mood === "nervous" ? "anim-wobble border-ketchup" : mood === "ok" ? "border-[#fb8c00]" : "border-leaf-dark",
                 )}
               >
@@ -570,7 +570,7 @@ export function Game({ difficulty, startLevel, onExit }: Props) {
                   <span className="font-mono text-[10px] font-bold text-choco/60">PEDIDO #{order.id}</span>
                   <span className="font-display truncate rounded bg-mustard px-1.5 py-px text-[11px] text-choco">{order.name}</span>
                 </div>
-                <ol className="mt-1 flex max-h-[92px] flex-col-reverse gap-px overflow-y-auto pr-0.5 sm:max-h-none sm:flex-1">
+                <ol className="mt-1 flex flex-col-reverse gap-px pr-0.5 sm:max-h-none sm:flex-1">
                   {order.recipe.map((p, i) => {
                     const done = i < stack.length;
                     const current = i === stack.length && phase !== "served" && phase !== "angry";
