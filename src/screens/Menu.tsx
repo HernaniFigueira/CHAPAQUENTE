@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "../utils/cn";
 import { DIFFICULTIES, LEVELS, type Difficulty } from "../game/types";
-import { loadCareer, loadScores } from "../game/storage";
+import { loadCareer, loadScores, type ScoreEntry } from "../game/storage";
 import { sfx, unlockAudio } from "../game/audio";
 import { IngredientView } from "../components/IngredientView";
 
@@ -35,12 +35,49 @@ export function Menu({ initialDiff, onPlay }: Props) {
   const scores = useMemo(loadScores, []);
   const [startLevel, setStartLevel] = useState(Math.min(career.unlocked, LEVELS.length - 1));
   const [showControls, setShowControls] = useState(false);
+  const [showScores, setShowScores] = useState(false);
+  const [scoresLeaving, setScoresLeaving] = useState(false);
+  const [showCareer, setShowCareer] = useState(false);
+  const careerPanelRef = useRef<HTMLDivElement>(null);
+  const controlsPanelRef = useRef<HTMLDivElement>(null);
+  const savedScroll = useRef(0);
 
   const play = () => {
     unlockAudio();
     sfx.click();
     onPlay(diff, startLevel);
   };
+
+  const openScores = () => {
+    setScoresLeaving(false);
+    setShowScores(true);
+  };
+  const closeScores = () => {
+    setScoresLeaving(true);
+    window.setTimeout(() => {
+      setShowScores(false);
+      setScoresLeaving(false);
+    }, 200);
+  };
+
+  useEffect(() => {
+    if (showCareer) {
+      savedScroll.current = window.scrollY;
+      requestAnimationFrame(() =>
+        careerPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }),
+      );
+    } else {
+      window.scrollTo({ top: savedScroll.current, behavior: "smooth" });
+    }
+  }, [showCareer]);
+
+  useEffect(() => {
+    if (showControls) {
+      requestAnimationFrame(() =>
+        controlsPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }),
+      );
+    }
+  }, [showControls]);
 
   return (
     <div className="bg-diner relative min-h-dvh overflow-x-hidden">
@@ -67,7 +104,7 @@ export function Menu({ initialDiff, onPlay }: Props) {
               </div>
             </div>
             <div className="text-left">
-              <p className="font-display text-sm tracking-[0.3em] text-mustard/90">🔥 FAST FOOD SIMULATOR 🔥</p>
+              <p className="font-display text-[13px] tracking-[0.2em] text-mustard/90 sm:text-sm sm:tracking-[0.3em]">🔥 FAST FOOD SIMULATOR 🔥</p>
               <h1 className="anim-flicker font-display text-[1.75rem] leading-none text-mustard shadow-chunky sm:text-7xl">
                 CHAPA QUENTE GG
               </h1>
@@ -134,16 +171,26 @@ export function Menu({ initialDiff, onPlay }: Props) {
               </span>
             </button>
 
-            <button
-              type="button"
-              onClick={() => setShowControls((v) => !v)}
-              aria-expanded={showControls}
-              aria-label={showControls ? "Ocultar controles do jogo" : "Mostrar controles do jogo"}
-              className="btn3d sm:hidden flex w-full items-center justify-center gap-2 rounded-xl border-b-4 border-[#c9b98f] bg-paper px-4 py-3 text-xl text-choco hover:bg-[#fff3d6]"
-            >
-              <span aria-hidden>⚙️</span>
-            </button>
-            <div className={cn("sm:block", !showControls && "hidden")}>
+            <div className="sm:hidden grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setShowControls((v) => !v)}
+                aria-expanded={showControls}
+                aria-label={showControls ? "Ocultar controles do jogo" : "Mostrar controles do jogo"}
+                className="btn3d flex items-center justify-center gap-2 rounded-xl border-b-4 border-[#c9b98f] bg-paper px-4 py-3 text-xl text-choco hover:bg-[#fff3d6]"
+              >
+                <span aria-hidden>⚙️</span>
+              </button>
+              <button
+                type="button"
+                onClick={openScores}
+                aria-label="Cupom de recordes"
+                className="btn3d flex items-center justify-center gap-2 rounded-xl border-b-4 border-[#c9b98f] bg-paper px-4 py-3 text-xl text-choco hover:bg-[#fff3d6]"
+              >
+                <span aria-hidden>🧾</span>
+              </button>
+            </div>
+            <div ref={controlsPanelRef} className={cn("sm:block", !showControls && "hidden")}>
               <div className="grid grid-cols-2 gap-3 text-choco">
                 <div className="rounded-xl border-4 border-ketchup-dark bg-paper p-3">
                   <h3 className="font-display text-base text-ketchup">⌨️ TECLADO</h3>
@@ -170,11 +217,17 @@ export function Menu({ initialDiff, onPlay }: Props) {
           {/* ======= right: career + scores ======= */}
           <section className="flex flex-col gap-4">
             <div className="rounded-2xl border-4 border-ketchup-dark bg-cream p-4 shadow-[0_8px_0_rgba(0,0,0,0.25)]">
-              <div className="flex items-baseline justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => setShowCareer((v) => !v)}
+                aria-expanded={showCareer}
+                className="flex w-full items-baseline justify-between gap-2 text-left"
+              >
                 <h2 className="font-display text-2xl text-ketchup">PLANO DE CARREIRA</h2>
                 <span className="text-[11px] font-bold text-choco/60">toque pra escolher o início</span>
-              </div>
-              <ol className="mt-3 space-y-1.5">
+              </button>
+              <div ref={careerPanelRef} className={cn("sm:block", !showCareer && "hidden")}>
+                <ol className="mt-3 space-y-1.5">
                 {LEVELS.map((lvl, i) => {
                   const locked = i > career.unlocked;
                   const selected = i === startLevel;
@@ -185,6 +238,7 @@ export function Menu({ initialDiff, onPlay }: Props) {
                         onClick={() => {
                           sfx.click();
                           setStartLevel(i);
+                          setShowCareer(false);
                         }}
                         className={cn(
                           "flex w-full items-center gap-3 rounded-lg border-2 px-3 py-1.5 text-left transition-all",
@@ -208,43 +262,64 @@ export function Menu({ initialDiff, onPlay }: Props) {
                     </li>
                   );
                 })}
-              </ol>
+                </ol>
+              </div>
             </div>
 
-            <div className="receipt-zig relative rounded-t-md bg-paper px-4 pt-3 pb-7 text-choco shadow-[0_10px_24px_rgba(0,0,0,0.35)]">
-              <p className="border-b-2 border-dashed border-choco/25 pb-2 text-center">
-                <span className="font-display text-lg tracking-wide">CUPOM DE RECORDES</span>
-                <span className="block text-[10px] font-bold tracking-[0.25em] opacity-60">CHAPA QUENTE LTDA.</span>
-              </p>
-              {scores.length === 0 ? (
-                <p className="py-4 text-center text-sm font-semibold opacity-70">
-                  Nenhum recorde ainda.<br />Frite o primeiro! 🍔
-                </p>
-              ) : (
-                <ol className="mt-2 space-y-1 font-mono text-[13px] font-bold">
-                  {scores.map((s, i) => (
-                    <li key={i} className="flex items-center gap-2">
-                      <span className={cn("w-6 shrink-0", i === 0 ? "text-mustard-dark" : "opacity-60")}>
-                        {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i + 1}.`}
-                      </span>
-                      <span className="min-w-0 flex-1 truncate">{s.name || "ANÔNIMO"}</span>
-                      <span className="hidden shrink-0 text-[10px] opacity-60 sm:inline">{LEVELS[Math.min(s.level, 6)].icon}</span>
-                      <span className="shrink-0 tabular-nums">{s.score.toLocaleString("pt-BR")}</span>
-                    </li>
-                  ))}
-                </ol>
-              )}
-              <p className="mt-2 border-t-2 border-dashed border-choco/25 pt-2 text-center text-[10px] font-bold tracking-widest opacity-50">
-                *** OBRIGADO PELA PREFERÊNCIA ***
-              </p>
-            </div>
+            <CupomCard scores={scores} className="hidden sm:block" />
           </section>
         </div>
 
         <footer className="pb-1 text-center text-[11px] font-semibold tracking-wide text-cream/50">
           Clientes nervosos não esperam · 3 desistências e o turno acaba · Boa sorte na chapa 🔥
         </footer>
+
+        {showScores && (
+          <div
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:hidden"
+            onClick={closeScores}
+          >
+            <div
+              className={cn("w-full max-w-sm", scoresLeaving ? "anim-fade-out" : "anim-fade-in")}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <CupomCard scores={scores} />
+            </div>
+          </div>
+        )}
       </div>
+    </div>
+  );
+}
+
+function CupomCard({ scores, className = "" }: { scores: ScoreEntry[]; className?: string }) {
+  return (
+    <div className={cn("receipt-zig relative rounded-t-md bg-paper px-4 pt-3 pb-7 text-choco shadow-[0_10px_24px_rgba(0,0,0,0.35)]", className)}>
+      <p className="border-b-2 border-dashed border-choco/25 pb-2 text-center">
+        <span className="font-display text-lg tracking-wide">CUPOM DE RECORDES</span>
+        <span className="block text-[10px] font-bold tracking-[0.25em] opacity-60">CHAPA QUENTE LTDA.</span>
+      </p>
+      {scores.length === 0 ? (
+        <p className="py-4 text-center text-sm font-semibold opacity-70">
+          Nenhum recorde ainda.<br />Frite o primeiro! 🍔
+        </p>
+      ) : (
+        <ol className="mt-2 space-y-1 font-mono text-[13px] font-bold">
+          {scores.map((s, i) => (
+            <li key={i} className="flex items-center gap-2">
+              <span className={cn("w-6 shrink-0", i === 0 ? "text-mustard-dark" : "opacity-60")}>
+                {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i + 1}.`}
+              </span>
+              <span className="min-w-0 flex-1 truncate">{s.name || "ANÔNIMO"}</span>
+              <span className="hidden shrink-0 text-[10px] opacity-60 sm:inline">{LEVELS[Math.min(s.level, 6)].icon}</span>
+              <span className="shrink-0 tabular-nums">{s.score.toLocaleString("pt-BR")}</span>
+            </li>
+          ))}
+        </ol>
+      )}
+      <p className="mt-2 border-t-2 border-dashed border-choco/25 pt-2 text-center text-[10px] font-bold tracking-widest opacity-50">
+        *** OBRIGADO PELA PREFERÊNCIA ***
+      </p>
     </div>
   );
 }

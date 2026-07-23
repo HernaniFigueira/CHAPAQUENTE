@@ -415,3 +415,37 @@ button {
   user-select: none;
   -webkit-user-select: none;
 }
+
+/* mobile: auto-scroll only, no visible scrollbar (manual drag never required) */
+@media (max-width: 639px) {
+  html {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  html::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes kf-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.anim-fade-in {
+  animation: kf-fade-in 0.22s ease-out both;
+}
+@keyframes kf-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+.anim-fade-out {
+  animation: kf-fade-out 0.2s ease-in both;
+}
