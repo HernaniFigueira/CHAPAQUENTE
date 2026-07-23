@@ -55,23 +55,23 @@ export function Menu({ initialDiff, onPlay }: Props) {
       <div className="relative mx-auto flex min-h-dvh w-full max-w-6xl flex-col items-stretch gap-5 px-3 py-5 sm:px-6 sm:py-8">
         {/* ======= neon sign ======= */}
         <header className="sign-bulbs rounded-2xl bg-ketchup-deep p-2 shadow-[0_10px_30px_rgba(0,0,0,0.45)]">
-          <div className="flex flex-col items-center gap-3 rounded-xl border-4 border-ketchup-dark bg-gradient-to-b from-[#70110b] to-ketchup-deep px-4 py-5 sm:flex-row sm:gap-6 sm:px-8">
-            <div className="anim-bob shrink-0 drop-shadow-[0_10px_8px_rgba(0,0,0,0.4)]" aria-hidden>
-              <div className="flex flex-col items-center">
-                {MASCOT.map((m, i) => (
-                  <IngredientView key={i} type={m.type} variant={m.variant} width={110} className="-mb-[3px]" />
-                ))}
+          <div className="flex flex-row items-center gap-3 rounded-xl border-4 border-ketchup-dark bg-gradient-to-b from-[#70110b] to-ketchup-deep px-4 py-3 sm:flex-row sm:gap-6 sm:px-8 sm:py-5">
+            <div className="origin-left scale-[0.68] -mr-[35px] shrink-0 sm:mr-0 sm:scale-100" aria-hidden>
+              <div className="anim-bob drop-shadow-[0_10px_8px_rgba(0,0,0,0.4)]">
+                <div className="flex flex-col items-center">
+                  {MASCOT.map((m, i) => (
+                    <IngredientView key={i} type={m.type} variant={m.variant} width={110} className="-mb-[3px]" />
+                  ))}
+                </div>
               </div>
             </div>
-            <div className="text-center sm:text-left">
+            <div className="text-left">
               <p className="font-display text-sm tracking-[0.3em] text-mustard/90">🔥 FAST FOOD SIMULATOR 🔥</p>
-              <h1 className="anim-flicker font-display text-5xl leading-none text-mustard shadow-chunky sm:text-7xl">
+              <h1 className="anim-flicker font-display text-[1.75rem] leading-none text-mustard shadow-chunky sm:text-7xl">
                 CHAPA QUENTE GG
               </h1>
-              <p className="mt-2 max-w-md font-body text-sm font-medium text-cream/85 sm:text-base">
-                Os pedidos não param. O tempo voa.
-                <br />
-                Monte cada hambúrguer na ordem certa e conquiste seu lugar entre as lendas do fast food.
+              <p className="mt-1.5 max-w-md font-body text-[11px] font-medium text-cream/85 sm:text-base">
+                Monte, sirva e sobreviva ao horário de pico 😬
               </p>
             </div>
           </div>
